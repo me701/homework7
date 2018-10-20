@@ -33,7 +33,7 @@ for `x`.  Moreover, you should provide a `save as` feature that
 saves the `x` and `f(x)` data to file as two columns.
 
 
-# Problem 3 - 2 points
+## Problem 3 - 2 points
 
 During the third day, we saw how to plug into Matplotlib in order to 
 embed plots in our GUI.  Your job is to create a function plotter by
