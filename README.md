@@ -1,45 +1,74 @@
 # ME 701 - Homework 7
 
-For this homework, you will work individually to extend the GUI's developed
-in class.  Your job is to create a *function evaluator* that has the
-specific features indicated in each of the following problems.  A snapshot
-of the final product is shown below, which you can use as a guide.
+Solve the following problems.  Include unit tests!
 
-![Example of GUI](screenshot.png "Example of GUI")
+## Problem 1 - File Processing and String Manipulation
 
 
-## Problem 1 - 2 points
+Use only `str` functions to read `pwr.log` and produce two arrays, one
+for `kinf` and one for `burnup`.  Note, these correspond to the second
+and third full columns, i.e., `burnup = [0, 0.1, 0.5, ...]` and
+`kinf = [1.27354, 1.23449, ...]` in the following:
 
-During the first day, we developed a GUI with multiple text boxes that could
-be connected using appropriate slots and signals.  You also were shown how
-`exec` and `eval` are useful ways to define Python statements and expressions
-using strings.  With these tools, develop a function evaluator that consists
-of three widgets.  The first should be a *drop-down box* with three pre-loaded
-functions.  A fourth, blank option should allow a user to enter any Python
-expression that represents a function of `x`.  The second box should be the
-value of `x` at which to evaluate the expression in the first box.  The third
-box should be another text box that displays the value of the expression.
-Finally, have two buttons under the boxes.  The left button should be to 
-evaluate the function and update the plot.  The right button should clear
-the output and the plot.  You may find that `QFormLayout` is of some use.
-
-
-## Problem 2 - 2 points
-
-Extend your GUI so that `x` can be a sequence of numbers of a NumPy expression.
- Specifically, 
-allow the users to enter things like `0, 1, 2, 3` or `np.linspace(0, 1, 4)`
-for `x`.  Moreover, you should provide a `save as` feature that
-saves the `x` and `f(x)` data to file as two columns.
+```
+                                             ****** *******
+   NO VOID    TFU    TMO    TCO    BOR ROD   BURNUP   K-INF   K-INF     M2     PIN   U-235 FISS PU  TOT PU
+                                             MWD/KG             TWO-GROUP     PEAK    WT %    WT %    WT %
+    1  0.0  900.0  565.0  580.0  900.0        0.000 1.27354 1.27149  62.18   1.059   4.000   0.000   0.000  
+    2                                         0.100 1.23449 1.23311  61.64   1.060   3.988   0.002   0.002  
+    3                                         0.500 1.22571 1.22445  61.51   1.060   3.941   0.022   0.022  
+    4                                         1.000 1.21976 1.21858  61.41   1.060   3.882   0.049   0.050  
+```
 
 
-## Problem 3 - 2 points
+## Problem 2 - Regex
 
-During the third day, we saw how to plug into Matplotlib in order to 
-embed plots in our GUI.  Your job is to create a function plotter by
-combining your interface from problems 1 and 2 with .  You should 
-ensure that plots can be refreshed for new $f$ or $x$ values.
+Write a Python function named `five_chars(s)` to find all five character long words in a string `s`.  You must use `re`.
 
 
+
+
+## Problem 3 - Fun Plots
+
+We are interested in examining how a time dependent problem changes with a parameter. We shall
+investigate the time dependent heat transfer equation in 1-D, i.e.,
+
+$$
+  \frac{\partial T}{\partial t} = \alpha \frac{\partial^2 T}{\partial x^2} \, ,
+$$
+
+with $T(0, t) = 1$  and T(1, t) = 0. We know that after an infinite amount of time, the solution is linear in x, but how do the
+solutions is linear in $x$, but how do the solutions vary for a fixed time?
+
+Here's a short program for estimating the temperature over time:
+
+```python
+import numpy as np
+import matplotlib.pyplot as plt
+alpha = 1
+def getTemp(alpha, L=1, tMax=0.1):
+    dt = 0.00005
+    dx = 0.01
+    Nx = int(L / dx)
+    dx = L / Nx
+    Nt = int(tMax / dt)
+    dt = tMax / Nt
+    dx = L / Nx
+    dt = tMax / Nt
+    assert dt * alpha / dx ** 2 <= 0.5, 'Parameters are not numerically stable'
+    temp = np.zeros(Nx)
+    temp[0] = 1
+    for i in range(Nt):
+        temp[1:-1] += dt * alpha / dx ** 2 * (temp[0:-2] - 2 * temp[1:-1] +
+            temp[2:])
+    return temp, np.linspace(0, L, Nx)
+
+T, x = getTemp(alpha)
+plt.plot(x, T)
+```
+
+
+Your task is to produce an animation showing how the solution
+changes with increasing $\alpha$.  Explore the parameter range $\alpha \in [0, 1]$.
 
 
